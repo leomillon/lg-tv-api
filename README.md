@@ -13,7 +13,7 @@ Work is in progress...
  - Add Grunt tasks
 
 
- License
- ----
+License
+----
 
- MIT
+MIT
