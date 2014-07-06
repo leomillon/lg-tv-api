@@ -2,7 +2,7 @@ var _ = require('underscore');
 var http = require("http");
 var libxmljs = require("libxmljs");
 
-function httpOptions(hostname, port, method) {
+function httpOptions(hostname, port, path, method) {
     return {
         host: hostname,
         port: port,
