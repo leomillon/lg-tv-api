@@ -187,7 +187,7 @@ function discoverDevices(callback) {
 
             if (!_.isNull(tvContext)) {
                 var options = buildDescriptionOptions(tvContext);
-                sendHttpRequest(options, null, function (err, res) {
+                utils.sendRequest(options, null, function (err, res) {
                     if (_.isNull(err)) {
                         var xmlResponse = libxmljs.parseXml(res.body);
 
