@@ -11,6 +11,7 @@ var LOCATION_KEY = 'LOCATION';
 var KEY_PAIRING_PATH = '/udap/api/pairing';
 var CMD_PATH = '/udap/api/command';
 
+var debug = require('debug')('lg-tv-api:main');
 var _ = require('underscore');
 var dgram = require('dgram');
 var url = require("url");
@@ -55,8 +56,7 @@ function sendDiscoveryRequest(callback) {
     var client = dgram.createSocket('udp4');
     client.bind(1901);
     client.send(discoveryRequest, 0, discoveryRequest.length, BROADCAST_PORT, BROADCAST_IP);
-    client.on('message', function(response, rinfo) {
-        //console.log('Response from : ' + rinfo.address + ':' + rinfo.port);
+    client.on('message', function(response) {
         discoveryContainer.push(extractData(response.toString('utf-8')));
     });
     _.delay(function(callback, discoveryContainer) {
@@ -66,12 +66,10 @@ function sendDiscoveryRequest(callback) {
 }
 
 function extractData(data) {
-    console.log('===== RESPONSE =====');
-    console.log(data);
-    console.log('====================');
+    debug('===== RESPONSE =====\n%s\n====================', data);
 
     if (data.indexOf('200 OK') != -1) {
-        console.log('Discovery response with success!');
+        debug('Discovery response with success!');
         var regex = /([A-Z-]+):( )?(.*)/g;
         var match = regex.exec(data);
         var extractedData = [];
@@ -100,7 +98,7 @@ function registerDevice(newDevice) {
 
 function sendDisplayKeyPairingRequest(device, callback) {
     if (!_.isNull(device)) {
-        console.log('\n\n==========DISPLAY KEY PAIRING==============');
+        debug('==========DISPLAY KEY PAIRING==============');
         var body = utils.xmlContent('pairing', 'showKey').toString();
         utils.sendRequest(buildKeyPairingOptions(device), body, callback);
     }
@@ -108,14 +106,14 @@ function sendDisplayKeyPairingRequest(device, callback) {
 
 function sendStartKeyPairingRequest(device, keyPairingValue, callback) {
     if (!_.isNull(device)) {
-        console.log('\n\n==========SEND START KEY PAIRING==============');
+        debug('==========SEND START KEY PAIRING==============');
         var body = utils.xmlContent('pairing', 'hello', keyPairingValue, device.port).toString();
         utils.sendRequest(buildKeyPairingOptions(device), body, callback);
     }
 }
 function sendEndKeyPairingRequest(device, callback) {
     if (!_.isNull(device)) {
-        console.log('\n\n==========SEND END KEY PAIRING==============');
+        debug('==========SEND END KEY PAIRING==============');
         var body = utils.xmlContent('pairing', 'byebye', null, device.port).toString();
         utils.sendRequest(buildKeyPairingOptions(device), body, callback);
     }
@@ -123,7 +121,7 @@ function sendEndKeyPairingRequest(device, callback) {
 
 function sendCmdRequest(device, cmdValue, callback) {
     if (!_.isNull(device)) {
-        console.log('\n\n==========SEND COMMAND==============');
+        debug('==========SEND COMMAND==============');
         var body = utils.xmlContent('command', 'HandleKeyInput', cmdValue).toString();
         var options = buildCmdOptions(device);
         utils.sendRequest(options, body, callback);
@@ -135,8 +133,8 @@ function buildDeviceFromDescription(tvContext, xmlDescription) {
     var deviceModelName = xmlDescription.get('//modelName').text();
     var deviceFriendlyName = xmlDescription.get('//friendlyName').text();
     var deviceType = xmlDescription.get('//deviceType').text();
-    console.log('Device model name = ' + deviceModelName);
-    console.log('Device UUID = ' + deviceUuid);
+    debug('Device model name = %s', deviceModelName);
+    debug('Device UUID = %s', deviceUuid);
     return {
         "name": deviceModelName,
         "friendlyName": deviceFriendlyName,
@@ -182,7 +180,6 @@ function discoverDevices(callback) {
         var finalCallback = _.after(discoveryContainer.length, callback);
         var devices = [];
         _.each(discoveryContainer, function (discoveredDevice) {
-            //console.log(discoveredDevice);
             var tvContext = buildTvContext(discoveredDevice);
 
             if (!_.isNull(tvContext)) {
