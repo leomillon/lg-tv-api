@@ -20,10 +20,10 @@ var utils = require("./lib/utils");
 var knownDevices = [];
 
 function buildTvContext(discoveryData) {
-    if (discoveryData != null) {
+    if (discoveryData !== null) {
         var descriptionLocation = discoveryData[LOCATION_KEY];
 
-        if (descriptionLocation != null) {
+        if (descriptionLocation !== null) {
             var descriptionUrl = url.parse(descriptionLocation);
 
             return {
@@ -31,7 +31,7 @@ function buildTvContext(discoveryData) {
                 "hostname": descriptionUrl.hostname,
                 "port": descriptionUrl.port,
                 "descriptionPath": descriptionUrl.path
-            }
+            };
         }
     }
     return null;
@@ -75,7 +75,7 @@ function extractData(data) {
         var regex = /([A-Z-]+):( )?(.*)/g;
         var match = regex.exec(data);
         var extractedData = [];
-        while (match != null) {
+        while (match !== null) {
             extractedData[match[1]] = match[3];
             match = regex.exec(data);
         }
