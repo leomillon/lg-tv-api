@@ -15,7 +15,7 @@ var _ = require('underscore');
 var dgram = require('dgram');
 var url = require("url");
 var libxmljs = require("libxmljs");
-var utils = require("./utils");
+var utils = require("./lib/utils");
 
 var knownDevices = [];
 
