@@ -226,11 +226,14 @@ function createStatusResponse(status, device) {
     };
 }
 
-module.exports.discovery = discoverDevices;
 
-module.exports.listRegistredDevices = listRegistredDevices;
+exports = module.exports = {};
 
-module.exports.startPairing = function (uuid, key, callback) {
+exports.discovery = discoverDevices;
+
+exports.listRegistredDevices = listRegistredDevices;
+
+exports.startPairing = function (uuid, key, callback) {
     var device = getDevice(uuid);
     var keyToSend = !_.isEmpty(key) ? key : device.pairingKey;
 
@@ -254,14 +257,14 @@ module.exports.startPairing = function (uuid, key, callback) {
     }
 };
 
-module.exports.endPairing = function (uuid, callback) {
+exports.endPairing = function (uuid, callback) {
     var device = getDevice(uuid);
     sendEndKeyPairingRequest(device, function (err, res) {
         callback(err, res);
     });
 };
 
-module.exports.sendCmd = function (uuid, cmd, callback) {
+exports.sendCmd = function (uuid, cmd, callback) {
     var device = getDevice(uuid);
     sendCmdRequest(device, cmd, function (err, res) {
         callback(err, res);
